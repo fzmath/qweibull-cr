@@ -58,38 +58,32 @@ University, }\orgaddress{\state{Langfang, }\country{China}}}
 \keywords{q-Weibull distribution | competing risks | weak identifiability |
 Bayesian inference | No-U-Turn Sampler}
 
-\abstract[ABSTRACT]{Competing-risks data, where each unit fails from one
+\abstract[ABSTRACT]{Competing-risks data, in which each unit fails from one
 of several mutually exclusive causes, arise routinely in reliability and
-lifetime analysis. The q-Weibull distribution nests the ordinary Weibull
-and accommodates both bounded ($q<1$) and heavy-tailed ($q>1$) lifetimes,
-but Bayesian inference for it under competing risks remains
-under-developed. We develop a unified Bayesian framework computed by the
-No-U-Turn Sampler (NUTS) in a better-conditioned, unconstrained
-coordinate system $(q,\log\eta,\log\beta)$, with an analytic gradient,
-Hessian-based preconditioning, and a smooth barrier at the bounded
-support wall. Because early competing failures remove the tail
-observations from which $q$ is learned, competing truncation leaves $q$
-weakly identifiable: the profile likelihood is broad and Wald intervals
-under-cover. Across six shape values spanning the bounded, Weibull, and
-heavy-tailed regimes and three truncation levels, we show that,
-\emph{specifically under strong competing-risk truncation and when the
-true $q$ is moderately close to the regularising centre}, a quadratic $q$
-penalty (prior shrinkage) reduces the root-mean-squared error and
-restores near-nominal coverage. A controlled comparison with unpenalised
-MLE, penalised MLE, and the mode (MAP) shows that most of this
-point-estimate gain is attributable to the regularisation itself rather
-than to Bayesian computation; the added value of the full Bayesian
-analysis is calibrated posterior intervals, whose coverage we document.
-When the tail is observed or $q$ lies far from the prior centre, the
-likelihood dominates and the MLE is preferable. NUTS adapts its mass
-matrix automatically and uses gradient evaluations about twice as
-efficiently as fixed-trajectory HMC, and its effective-sample throughput
-is comparable to a mature probabilistic-programming implementation on the
-same data. On high-voltage stress-test data ($n=58$), competing risks are
-significant, but the early mode shows only an uncertain heavy-tail
-signal, and posterior predictive checks are consistent with the observed
-lifetimes; the degradation mode is well described by an ordinary
-Weibull.}
+lifetime analysis. The q-Weibull distribution nests the ordinary Weibull at
+$q=1$ and extends it in two useful directions---a heavy power-law tail for
+$1<q<2$ and a bounded support for $q<1$---yet Bayesian inference for
+q-Weibull competing risks remains under-developed. Because the tail
+parameter $q$ is identified mainly from tail observations, early competing
+failures truncate the observed lifetime and leave $q$ weakly identifiable:
+the profile likelihood becomes broad and Wald intervals under-cover. We
+develop a Bayesian framework for q-Weibull competing risks computed by the
+No-U-Turn Sampler (NUTS), in a better-conditioned, unconstrained coordinate
+system $(q,\log\eta,\log\beta)$ with an analytic gradient, Hessian-based
+preconditioning, and a smooth barrier at the bounded-support wall. Across
+six $q$ values spanning the bounded, Weibull, and heavy-tailed regimes and
+three truncation levels, a quadratic $q$ prior (shrinkage) reduces the
+root-mean-squared error and restores near-nominal coverage specifically
+under strong competing-risk truncation when the true $q$ is moderately
+close to the regularising centre. A controlled comparison with unpenalised
+MLE, penalised MLE, and the MAP shows that most of this point-estimate gain
+comes from the regularisation itself rather than from Bayesian computation;
+the added value of the full Bayesian analysis lies in calibrated posterior
+intervals. When the tail is observed or $q$ lies far from the prior centre,
+the likelihood dominates and the MLE is preferable. On high-voltage
+stress-test data ($n=58$), competing risks are significant, the early mode
+shows only an uncertain heavy-tail signal, and posterior predictive checks
+are consistent with the observed lifetimes.}
 
 \maketitle
 
@@ -119,60 +113,55 @@ The q-Weibull distribution, obtained from Tsallis entropy
 heavy (power-law) tail for $1<q<2$, and a bounded support for $q<1$. A single
 additional parameter thus extends the Weibull in two useful directions.
 
-Despite this flexibility, inference for q-Weibull competing risks faces
-three difficulties. \emph{First}, the parameter that governs the tail, $q$,
-is identified largely from observations in the tail; when a competing cause
-truncates the lifetime distribution early, the tail of the cause of interest
-is only partially observed and $q$ can become weakly identifiable, with a
-profile likelihood that is broad, flat, or asymmetric. \emph{Second},
-maximum-likelihood estimates and their Wald standard errors rely on local
-quadratic and asymptotic-normal approximations that are unreliable in this
-limited-information regime, and the bounded regime introduces a hard support
-boundary at which the log-density is singular. \emph{Third}, generic
-random-walk Metropolis samplers mix poorly over the correlated, curved
-q-Weibull parameter space, making a naive Bayesian implementation
+Despite this flexibility, q-Weibull competing-risks inference faces three
+obstacles. \emph{First}, the tail parameter $q$ is identified largely from
+observations in the tail; when a competing cause truncates the lifetime
+early, the cause of interest is only partially observed and $q$ becomes
+weakly identifiable, with a profile likelihood that is broad, flat, or
+asymmetric. \emph{Second}, maximum-likelihood estimates and their Wald
+standard errors rely on local quadratic and normal approximations that are
+unreliable in this limited-information regime, and the bounded regime adds a
+hard support boundary at which the log-density is singular. \emph{Third},
+generic random-walk Metropolis samplers mix poorly over the correlated,
+curved q-Weibull parameter space, so a naive Bayesian implementation is
 computationally expensive.
 
-This article addresses all three difficulties with a unified Bayesian
-treatment computed by the No-U-Turn Sampler (NUTS)
-\cite{hoffman2014nuts}, an adaptive form of Hamiltonian Monte Carlo (HMC)
-\cite{neal2011,betancourt2017} that uses gradient information and recursive
-trajectory doubling. Recent work has applied HMC to Weibull-based competing
-risks \cite{abba2025wdcr,abdullahi2026,bfm2025}, used NUTS for Bayesian
-inference of short- and long-tailed queueing models \cite{alawamy2025}, and
-applied Gibbs sampling to the q-Weibull \cite{sigma2026gibbs}. The same
-high-voltage endurance data have been analysed with ordinary Weibull
-competing risks under adaptive progressive censoring \cite{elshahhat2024}.
-The present framework differs by targeting the q-Weibull directly, by using
-NUTS rather than Gibbs or random-walk proposals, and by treating
-identifiability under competing truncation as a first-class question. Our
-contributions are:
+We address all three obstacles with a unified Bayesian treatment computed by
+the No-U-Turn Sampler (NUTS) \cite{hoffman2014nuts}, an adaptive form of
+Hamiltonian Monte Carlo (HMC) \cite{neal2011,betancourt2017} that uses
+gradient information and recursive trajectory doubling. Recent work has
+applied HMC to Weibull-based competing risks
+\cite{abba2025wdcr,abdullahi2026,bfm2025}, used NUTS for short- and
+long-tailed queueing models \cite{alawamy2025}, and applied Gibbs sampling to
+the q-Weibull \cite{sigma2026gibbs}; the same high-voltage endurance data
+have also been analysed with ordinary Weibull competing risks under adaptive
+progressive censoring \cite{elshahhat2024}. Our framework differs by
+targeting the q-Weibull directly, by using NUTS rather than Gibbs or
+random-walk proposals, and---most importantly---by treating identifiability
+under competing truncation as a first-class question. The contributions are:
 \begin{enumerate}
-  \item We establish a \textbf{Bayesian framework for q-Weibull competing
-  risks under partially observed tails}, formulated in an unconstrained
-  parameterisation with substantially reduced global posterior anisotropy
-  $(q,\log\eta,\log\beta)$, with a cause-separable likelihood and an
-  analytic log-posterior gradient that remains valid continuously across
-  $q=1$.
-  \item We \textbf{characterise the loss of identifiability of $q$ induced by
-  competing-risk truncation}: early competing failures remove the tail
-  observations from which $q$ is learned, giving broad, flat, or asymmetric
-  profile likelihoods, and we document how this affects the bounded and
-  heavy-tailed regimes differently.
-  \item We develop a \textbf{computational strategy} combining an
-  unconstrained parameterisation, analytic gradients, Hessian
-  preconditioning, and a smooth treatment of the bounded-support wall and the
-  parameter bounds, so that Hamiltonian trajectories explore the posterior
-  without entering singular regions.
-  \item Through an \textbf{extensive simulation over the bounded, Weibull, and
-  heavy-tailed regimes}, we show that Bayesian regularisation improves
-  root-mean-squared error and interval coverage specifically in the weakly
-  identified, strongly truncated regime, whereas the likelihood dominates
-  when the tail is observed.
-  \item We give a \textbf{reliability application} that shows how the
-  framework distinguishes genuine evidence for a heavy tail from a mere
-  displacement of the posterior above $q=1$, avoiding over-interpretation of
-  a small, heavily censored sample.
+  \item A \textbf{Bayesian framework for q-Weibull competing risks under
+  partially observed tails}, in a better-conditioned unconstrained
+  parameterisation $(q,\log\eta,\log\beta)$ with a cause-separable
+  likelihood and an analytic log-posterior gradient that remains valid
+  continuously across $q=1$.
+  \item A \textbf{characterisation of how competing-risk truncation erodes
+  the identifiability of $q$}: early competing failures remove the tail
+  observations from which $q$ is learned, producing broad, flat, or
+  asymmetric profile likelihoods, with the bounded and heavy-tailed
+  regimes affected differently.
+  \item A \textbf{computational strategy} combining the unconstrained
+  parameterisation, analytic gradients, Hessian preconditioning, and a
+  smooth treatment of the bounded-support wall, so that Hamiltonian
+  trajectories explore the posterior without entering singular regions.
+  \item An \textbf{honest assessment of the regularisation gain}: across the
+  bounded, Weibull, and heavy-tailed regimes, Bayesian regularisation
+  improves RMSE and coverage specifically in the weakly identified, strongly
+  truncated regime---and a controlled MLE/penalised-MLE/MAP comparison
+  shows most of the point-estimate gain comes from the prior penalty, not
+  from Bayesian computation itself. A reliability application further
+  separates genuine heavy-tail evidence from a mere displacement of the
+  posterior above $q=1$.
 \end{enumerate}
 
 The remainder of the article is organised as follows. Section
