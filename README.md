@@ -4,7 +4,7 @@ Reproducible research package for:
 
 > **q-Weibull Competing Risks under Weak Identifiability: Bayesian Inference via the No-U-Turn Sampler**
 
-Authors: Fuchang Wang (University of Emergency Management, Sanhe) and Huirong Cao (Langfang Normal University, Langfang). Corresponding author: Fuchang Wang (wangfuchang@cidp.edu.cn). Target journal: *Quality and Reliability Engineering International* (QREI, Wiley).
+Authors: Huirong Cao (Langfang Normal University, Langfang) and Fuchang Wang (University of Emergency Management, Sanhe). Corresponding author: Huirong Cao (huirongcao@126.com). Target journal: *Quality and Reliability Engineering International* (QREI, Wiley).
 
 ## Repository layout
 
