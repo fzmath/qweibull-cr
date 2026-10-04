@@ -54,7 +54,7 @@ lifetime analysis. The q-Weibull distribution nests the ordinary Weibull
 and accommodates both bounded ($q<1$) and heavy-tailed ($q>1$) lifetimes,
 but Bayesian inference for it under competing risks remains
 under-developed. We develop a unified Bayesian framework computed by the
-No-U-Turn Sampler (NUTS) in a more weakly coupled, unconstrained
+No-U-Turn Sampler (NUTS) in a better-conditioned, unconstrained
 coordinate system $(q,\log\eta,\log\beta)$, with an analytic gradient,
 Hessian-based preconditioning, and a smooth barrier at the bounded
 support wall. Because early competing failures remove the tail
@@ -139,10 +139,11 @@ identifiability under competing truncation as a first-class question. Our
 contributions are:
 \begin{enumerate}
   \item We establish a \textbf{Bayesian framework for q-Weibull competing
-  risks under partially observed tails}, formulated in unconstrained,
-  weakly coupled coordinates $(q,\log\eta,\log\beta)$, with a
-  cause-separable likelihood and an analytic log-posterior gradient that
-  remains valid continuously across $q=1$.
+  risks under partially observed tails}, formulated in an unconstrained
+  parameterisation with substantially reduced global posterior anisotropy
+  $(q,\log\eta,\log\beta)$, with a cause-separable likelihood and an
+  analytic log-posterior gradient that remains valid continuously across
+  $q=1$.
   \item We \textbf{characterise the loss of identifiability of $q$ induced by
   competing-risk truncation}: early competing failures remove the tail
   observations from which $q$ is learned, giving broad, flat, or asymmetric
@@ -297,7 +298,7 @@ $1000$ points, and all results below use a $5000$-point grid.
 Direct sampling in $(\lambda,\beta)$ is ill-conditioned because
 $\log\lambda=-\beta\log\eta$ couples the scale and shape, and the bounded
 regime adds a hard support constraint. We instead work in the unconstrained,
-weakly coupled coordinates
+better-conditioned coordinates
 \begin{equation}\label{eq:x}
 \bm{x}=(x_q,x_e,x_b), \qquad
 q=2-e^{x_q},\quad \eta=e^{x_e},\quad \beta=e^{x_b},
@@ -337,11 +338,19 @@ fails to converge. We therefore find \emph{no evidence} that
 $(q,\log\lambda,\log\beta)$ is the more orthogonal parameterisation; it is
 strictly worse, because $\log\lambda$ remains strongly coupled to $\beta$
 through $\log\lambda=-\beta\log\eta$. We keep $(q,\log\eta,\log\beta)$ and
-describe it as merely a \emph{more weakly coupled} unconstrained
-system. The largest posterior correlation in our chosen coordinates is
-$|\rho|\approx0.94$, confined within a single failure mode's
-scale--shape block, and is absorbed by the Hessian preconditioner of
-Section~\ref{sec:adapt}.
+describe it as an \emph{unconstrained parameterisation with substantially
+reduced global posterior anisotropy}. We are explicit that this is a
+relative, not absolute, improvement: even in our chosen coordinates a strong
+pairwise correlation remains, $|\rho_{\max}|\approx0.94$ between
+$\log\eta_D$ and $\log\beta_D$ (the degradation-mode scale and shape), and
+$\kappa\approx1.75\times10^{3}$ is far from unit condition. What the
+reparameterisation buys us is a much smaller \emph{global} condition number
+and effective-sample throughput; the residual within-mode correlation is
+absorbed by the Hessian preconditioner of Section~\ref{sec:adapt}. The
+divergence counts in Table~\ref{tab:parparam} are from this shorter
+comparison run (two chains $\times\,600$ draws); the production voltage fit
+(two chains $\times\,2000$ draws, $1000$ warm-up) is diagnosed separately
+in Section~\ref{sec:diag}.
 
 \begin{table}[h]
 \centering
@@ -370,7 +379,7 @@ $\hat R_{\max}$ & $1.004$ & $1.17$\\
 alternative $(q,\log\lambda,\log\beta)$ parameterisation (B) is not more
 orthogonal: its Hessian is about $550$ times worse-conditioned and its
 chains fail to converge. We therefore retain $(q,\log\eta,\log\beta)$ and
-describe it only as a more weakly coupled system.}
+describe it only as a better-conditioned, unconstrained system.}
 \label{fig:parcorr}
 \end{figure}
 
@@ -464,7 +473,9 @@ $\bm M$ from the negative Hessian of the log-posterior at the mode,
 symmetrise it, and regularise its spectrum so that no direction is too
 steep or too flat (Section~\ref{app:hess}); we then draw
 $\bm r\sim\mathcal N(\bm0,\bm M)$ and use $\bm M^{-1}$ in the leapfrog
-position update. This is a practical preconditioner, not an assertion that
+position update. By convention the Hamiltonian kinetic energy is
+$K(\bm r)=\tfrac12\bm r^{\top}\bm M^{-1}\bm r$, so that the momentum
+covariance is exactly $\bm M$. This is a practical preconditioner, not an assertion that
 the local Hessian equals the true posterior covariance. The step size is
 initialised
 with the find-reasonable-epsilon routine, which doubles or halves it while a
@@ -497,15 +508,20 @@ a smooth extension. For a small threshold $\varepsilon_s=10^{-3}$,
 \end{cases}
 \end{equation}
 Inside the data-supported region $u>\varepsilon_s$ the density is
-unchanged. At the fitted parameters the smallest inner factor over the
-observed units is well above the threshold (about $0.49$ in the
-bounded-regime design below), so the ramp is never evaluated at a data
-point and the likelihood is identical, not merely close. Beyond the
-nominal boundary the log-density continues as a finite-slope ramp off
-which trajectories can reflect rather than stick. The threshold therefore
-affects only the unobserved near-wall region explored by the trajectories,
-and a sensitivity analysis in Section~\ref{sec:sens} confirms that
-posterior summaries are unchanged for $\varepsilon_s$ from $10^{-3}$ to
+unchanged. We are explicit that we sample a \emph{computationally smoothed
+target}, not the exact singular posterior: this smoothed target agrees
+\emph{pointwise} with the original likelihood throughout the entire
+data-supported region. At the fitted parameters the smallest inner factor
+over the observed units is well above the threshold (about $0.49$ in the
+bounded-regime design below, and $0.84$--$1.01$ at the voltage posterior
+mean), so the ramp is never evaluated at a data point and the likelihood on
+the observed sample is identical, not merely close. Beyond the nominal
+boundary the log-density continues as a finite-slope ramp off which
+trajectories can reflect rather than stick. The barrier is therefore
+\emph{computationally active but inferentially inactive}: it acts only in
+the unobserved near-wall region that the trajectories explore, and a
+sensitivity analysis in Section~\ref{sec:sens} confirms that posterior
+summaries are unchanged for $\varepsilon_s$ from $10^{-3}$ to
 $10^{-5}$.
 
 \subsection{Convergence diagnostics}\label{sec:diag}
@@ -519,6 +535,56 @@ non-finite log-posterior (e.g.\ a random perturbation crossing the support
 boundary) are detected and re-drawn with decreasing perturbation scale,
 falling back to the maximum-likelihood point, preventing a chain from
 initialising outside the support.
+
+\subsubsection{Where the divergent transitions occur.}\label{sec:divdiag}
+For the production voltage fit (two chains $\times\,2000$ draws after $1000$
+warm-up draws, target acceptance $0.9$), divergent transitions are
+separated into warm-up ($98$) and post-warm-up ($95$). Their location is
+instructive (Table~\ref{tab:divdiag}): about $93$ of the $95$ post-warm-up
+divergences ($\approx98\%$) occur where the sampler explores the artificial
+smooth-barrier or support-wall region---$q$ pinned against the soft walls at
+$q\approx0.2$ or $q\approx1.98$, or a $q<1$ trajectory briefly penetrating
+the support boundary---and only $2$ of $95$ land inside the data-supported
+posterior bulk (Mahalanobis distance $1.4$--$1.8$). The remaining diagnostics
+are healthy: maximum post-warm-up tree depth $4$ (mean $2.06$), mean
+acceptance $0.933$, per-parameter ESS $[494,486,615,776,800,964]$ (total
+$4135$), about $68.3$ effective samples per second, per-chain BFMI
+$[1.023,1.007]$ (mean $1.015$), and $\hat R<1.01$. At the posterior mean the
+smallest inner factor is $u=1.013$ (early mode) and $0.838$ (degradation
+mode), both far above $\varepsilon_s=10^{-3}$. The honest reading is that
+\emph{about} $98\%$ of post-warm-up divergences occur in the barrier/support-wall
+region rather than in the high-density bulk; the small residual fraction
+($2$ of $95$) means we do not claim the sampler never touches the bulk.
+With BFMI $\approx1.01$, ESS/s $\approx68$, and $\hat R<1.01$, these
+barrier-localised divergences do not materially affect the posterior
+summaries.
+
+\begin{table}[h]
+\centering
+\caption{Divergence localisation and convergence diagnostics for the
+production voltage NUTS fit ($2$ chains $\times\,2000$ draws, $1000$
+warm-up, target acceptance $0.9$).}
+\label{tab:divdiag}
+\small
+\begin{tabular}{lc}
+\toprule
+Quantity & Value\\
+\midrule
+Warm-up divergences & $98$\\
+Post-warm-up divergences & $95$\\
+\quad near smooth-barrier / support wall & $\approx93$ ($\approx98\%$)\\
+\quad in data-supported posterior bulk (Mahalanobis $1.4$--$1.8$) & $2$\\
+Mean / max post-warm-up tree depth & $2.06$ / $4$\\
+Mean acceptance probability & $0.933$\\
+Per-parameter ESS & $[494,486,615,776,800,964]$\\
+Total ESS & $4135$\\
+Effective samples / second & $68.3$\\
+BFMI (per chain, mean) & $[1.023,\,1.007]$ ($1.015$)\\
+$\hat R_{\max}$ & $<1.01$\\
+Min inner factor at posterior mean (E / D) & $1.013$ / $0.838$\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 % =====================================================================
 \section{Simulation study}\label{sec:sim}
@@ -694,6 +760,55 @@ Figure~\ref{fig:weakmap} uses open-circle solid lines for the MLE and
 filled-circle dashed lines for the Bayes RMSE, so that the panels remain
 legible in greyscale.
 
+Because $\det(\bm I)$ depends on the units of the parameterisation, it is
+only an auxiliary summary. A more interpretable measure of the information
+\emph{specifically about $q$}, after the nuisance scale and shape
+$(\log\eta,\log\beta)$ are eliminated, is the Schur complement
+\begin{equation}\label{eq:schur}
+I_{q\cdot\psi}=I_{qq}-I_{q\psi}\,\bm I_{\psi\psi}^{-1}\,\bm I_{\psi q},
+\qquad
+\mathrm{SE}(q)\approx I_{q\cdot\psi}^{-1/2},
+\end{equation}
+together with the width $W_q$ of the $95\%$ profile-likelihood (likelihood-
+ratio) interval for $q$. Table~\ref{tab:schur} reports these across
+truncation and true $q$. Under strong truncation the partial information
+about $q$ is small ($I_{q\cdot\psi}=5.2$--$48.6$), the standard error is
+large ($0.14$--$0.44$), and $W_q$ is wide---and, for the bounded and
+near-Weibull cases, \emph{one-sided}: the lower profile-LOD bound hits the
+$q$-grid edge ($q=0.25$), so the interval cannot close on the left. As
+truncation weakens, $I_{q\cdot\psi}$ rises to $115$ and the interval shrinks
+to $W_q\approx0.23$ (weak, $q=1.45$). This scale-free picture is the
+quantitative content of ``weak identifiability'': strong competing
+truncation leaves little information about the tail shape once the nuisance
+parameters are profiled out, and the profile interval is not merely wide but
+occasionally unbounded on one side.
+
+\begin{table}[h]
+\centering
+\caption{Scale-free identifiability of $q$: Schur-complement partial
+information $I_{q\cdot\psi}$, implied standard error, and $95\%$
+profile-LR interval width $W_q$ ($n=200$). An asterisk marks a
+one-sided interval whose lower end hits the $q$-grid boundary
+($q=0.25$).}
+\label{tab:schur}
+\small
+\begin{tabular}{llccc}
+\toprule
+Truncation & $q_{\rm true}$ & $I_{q\cdot\psi}$ & SE$(q)$ & $W_q$\\
+\midrule
+Strong   & $0.6$  & $5.2$  & $0.44$ & $1.45^{*}$\\
+         & $1.0$  & $12.6$ & $0.28$ & $1.47^{*}$\\
+         & $1.45$ & $48.6$ & $0.14$ & $1.39$\\
+Moderate & $0.6$  & $11.4$ & $0.30$ & $1.37^{*}$\\
+         & $1.0$  & $24.6$ & $0.20$ & $1.06$\\
+         & $1.45$ & $80.7$ & $0.11$ & $0.43$\\
+Weak     & $0.6$  & $21.0$ & $0.22$ & $0.99^{*}$\\
+         & $1.0$  & $38.7$ & $0.16$ & $0.61$\\
+         & $1.45$ & $115.1$& $0.09$ & $0.23$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \begin{figure*}[h]
 \centering
 \includegraphics[width=.95\textwidth]{../figures/fig7_weak_id_map.pdf}
@@ -708,7 +823,9 @@ open circles, solid line; Bayes RMSE: filled circles, dashed line.}
 
 \subsubsection{Recovery of the scale and shape $\eta,\beta$}\label{sec:etasupp}
 Table~\ref{tab:etasupp} reports the recovery of $\eta$ and $\beta$ in
-addition to $q$ ($R=30$, Monte Carlo standard error $\approx0.04$). Under
+addition to $q$ ($R=30$, Monte Carlo standard error $\approx0.04$; treated
+as a descriptive, exploratory supplement rather than a formal Monte Carlo
+validation). Under
 weak truncation all three parameters are recovered cleanly: the $\eta$
 bias is single-digit and its RMSE $10$--$13$ (on the $100$-unit median-life
 scale), and the $\beta$ bias is small throughout. Under \emph{strong}
@@ -851,7 +968,7 @@ $10^{-5}$ & $0.38$ & $0.42$ & $0.97$ & $1.47$ & $3.40$\\
 \end{tabular}
 \end{table}
 
-\paragraph{Prior centre $\mu_q$.}\label{sec:priorcenter}
+\subsection{Prior centre $\mu_q$.}\label{sec:priorcenter}
 Because the default prior is centred at the ordinary Weibull value
 ($\mu_q=1$), we checked how the regularisation target affects the strongly
 truncated, heavy-tailed case ($q_{\rm true}=1.45$, $n=200$, $R=30$,
@@ -865,11 +982,12 @@ centre) is a property of anchoring at $q=1$, not a sampling artefact; in
 practice the centre should be placed near the physically expected tail
 behaviour whenever prior information exists.
 
-\paragraph{Upper-truncation boundary fraction.}\label{sec:boundf}
+\subsection{Upper-truncation boundary fraction.}\label{sec:boundf}
 For the bounded regime the location of the observational window relative
 to the support endpoint matters. Define $f=\max_i t_i/T_{\max}$, the
 fraction of the theoretical endpoint reached by the largest observed time
-($q=0.6$, weak truncation, $n=200$, $R=20$). At $f=0.5$ (about $35\%$
+($q=0.6$, weak truncation, $n=200$, $R=20$; descriptive/exploratory). At
+$f=0.5$ (about $35\%$
 censoring) the MLE biases $q$ upward by $+0.13$ and the Bayes estimate by
 $+0.28$, with coverage falling to $0.65$; at $f=0.7$ the bias is $+0.05$
 and coverage $0.85$; for $f\ge0.85$ the estimates return to the
@@ -878,7 +996,7 @@ upper truncation against a bounded support thus pushes the bounded $q$
 upward and degrades coverage, because the finite endpoint is essentially
 unobserved.
 
-\paragraph{Sample size.}\label{sec:n}
+\subsection{Sample size.}\label{sec:n}
 Finally, Figure~\ref{fig:n_effect} varies $n$ under the hardest design
 ($q_{\rm true}=1.45$, strong truncation). The MLE RMSE stays on a weak-identification
 plateau---$0.73$, $0.78$, $0.76$ for $n=50,100,200$---and collapses only at
@@ -888,9 +1006,14 @@ This shows that, under strong competing truncation, increasing the sample
 size in the hundreds does not by itself restore identifiability: the
 regularisation and the honest interval are what stabilise inference until
 the information (sample size and/or observed tail) becomes large. The
-$n=500$ point uses only $R=12$ replicates (Monte Carlo standard error
-$\approx0.063$). Figure~\ref{fig:n_effect} uses distinct black line styles
-and markers (solid circle, dashed square, dotted triangle, dash-dot
+effective information is governed by $n_{\rm eff}\approx n\times p_{\rm
+tail}$, where $p_{\rm tail}$ is the fraction of units that survive long
+enough to inform the tail: under strong truncation $p_{\rm tail}$ is small,
+so even $n=200$ carries little tail information. The $n=500$ point uses only
+$R=12$ replicates (Monte Carlo standard error $\approx0.063$), so this
+sample-size scan is treated as \emph{exploratory} rather than as a formal
+Monte Carlo validation. Figure~\ref{fig:n_effect} uses distinct black line
+styles and markers (solid circle, dashed square, dotted triangle, dash-dot
 diamond) so it prints unambiguously in greyscale.
 
 \begin{figure}[h]
@@ -1035,8 +1158,8 @@ $[390,\,549]$ h (median $442$ h). The cumulative incidences at the last
 observed time agree: $\CIF_E(446)=0.346$ versus predictive $[0.197,0.549]$,
 and $\CIF_D(446)=0.617$ versus $[0.431,0.799]$. The modelled system
 reliability over $50$--$400$ h lies entirely within the $95\%$ predictive
-band. No observed statistic falls outside its predictive interval, so the
-q-Weibull competing-risks model reproduces the failure counts, the range
+band. No discrepancy was detected for the selected predictive summaries:
+the q-Weibull competing-risks model reproduces the failure counts, the range
 of lifetimes, and the cause-specific accumulation; the PPC therefore does
 not reveal a structural misspecification, while it remains consistent with
 the earlier conclusion that the heavy-tail signal for the early mode is
@@ -1083,15 +1206,26 @@ A key limitation is the assumption of independent latent cause-specific
 times. To gauge its effect we simulated data from a shared-gamma-frailty
 model (so the two causes are dependent) but fitted the \emph{wrong}
 independent q-Weibull competing-risks Bayes model ($q_{\rm true}=1.45$,
-strong truncation, $n=200$, $R=20$). With independent data the bias in
-$q_E$ is $-0.30$ (RMSE $0.39$, coverage $0.90$); under mild dependence
-(frailty variance $\nu=5$) it shrinks to $-0.08$ (RMSE $0.23$, coverage
-$1.00$); and under stronger dependence ($\nu=2$) it flips to $+0.25$
-(RMSE $0.31$, coverage $0.80$). Ignoring positive frailty dependence thus
-moves the $q_E$ bias from negative to positive and degrades coverage to
-$0.80$: the independent-cause assumption is acceptable under weak
-dependence but should be relaxed, e.g.\ with shared-frailty or
-copula-cause models, when dependence is suspected. Other limitations
+strong truncation, $n=200$, $R=20$; exploratory). With independent data the
+bias in $q_E$ is $-0.30$ (RMSE $0.39$, coverage $0.90$); under mild
+dependence (frailty variance $\nu=5$) it shrinks to $-0.08$ (RMSE $0.23$,
+coverage $1.00$), i.e.\ mild dependence has only a limited effect; but
+under stronger dependence ($\nu=2$) it flips to $+0.25$ (RMSE $0.31$,
+coverage $0.80$), which substantially distorts the $q_E$ inference.
+Ignoring positive frailty dependence thus moves the $q_E$ bias from negative
+to positive and degrades coverage to $0.80$: the independent-cause
+assumption is acceptable under weak dependence but should be relaxed,
+e.g.\ with shared-frailty or copula-cause models, when dependence is
+suspected.
+
+The hardest region of all is the bounded regime $q<1$ when the support
+endpoint is not observed. There the profile interval can be one-sided and
+the Bayesian coverage can fall to about $0.65$ (Section on boundary
+fraction), and the posterior occasionally ``escapes'' to $q\ge1$ because
+the bounded mode is essentially unidentifiable. Regularisation stabilises
+inference in this region but \emph{cannot create information about an
+unobserved support boundary}; no amount of prior centring recovers a
+endpoint that the data never approach. Other limitations
 include the choice of prior scale and the modest sample size of the
 application.
 Natural extensions are accelerated life tests with stress-dependent scale
@@ -1104,14 +1238,17 @@ refer to \cite{gelman2014} for the general Bayesian workflow.
 \section{Conclusion}\label{sec:concl}
 % =====================================================================
 We developed a unified Bayesian framework for q-Weibull competing risks,
-computed by NUTS in weakly coupled, unconstrained coordinates
-$(q,\log\eta,\log\beta)$ with an analytic gradient and a smooth barrier for
+computed by NUTS in a better-conditioned, unconstrained coordinate
+system $(q,\log\eta,\log\beta)$ with an analytic gradient and a smooth barrier for
 the bounded support wall. Across the bounded, Weibull, and heavy-tailed regimes, the simulation
 showed that competing truncation weakens the identifiability of the tail
-parameter $q$, and it mapped where Bayesian shrinkage helps: it stabilises
-estimation and yields honest uncertainty intervals when information is
-scarce and $q$ departs only moderately from one, whereas the likelihood
-dominates when the tail is observed or $q$ lies far from the centre. On
+parameter $q$, and it mapped where Bayesian regularisation helps: it can
+substantially improve point estimation and interval calibration under strong
+competing-risk truncation, but it is \emph{not} a universal improvement over
+the MLE---the likelihood dominates when the tail is observed or $q$ lies far
+from the prior centre. The core qualification is that regularisation
+stabilises inference but cannot create information about an unobserved
+support boundary. On
 the computational side, NUTS adapts its mass matrix automatically and
 uses gradient evaluations about twice as efficiently as a
 fixed-trajectory HMC; it matches a covariance-preconditioned random walk
