@@ -354,18 +354,17 @@ in Section~\ref{sec:diag}.
 
 \begin{table}[h]
 \centering
-\caption{Comparison of the proposed $(q,\log\eta,\log\beta)$
-parameterisation (A) against $(q,\log\lambda,\log\beta)$ (B) on the
-voltage posterior, evaluated at the posterior mode.}
+\caption{Parameterisation comparison on the voltage posterior at the mode:
+A $=(q,\log\eta,\log\beta)$, B $=(q,\log\lambda,\log\beta)$.}
 \label{tab:parparam}
 \small
 \begin{tabular}{lcc}
 \toprule
-Quantity & A: $(q,\log\eta,\log\beta)$ & B: $(q,\log\lambda,\log\beta)$\\
+Quantity & A & B\\
 \midrule
 Hessian condition number $\kappa(\bm H)$ & $1.75\times10^{3}$ & $9.66\times10^{5}$\\
 Effective samples / second & $129.5$ & $0.061$\\
-Divergent transitions (sampling) & $18$ & $26$\\
+Divergent transitions & $18$ & $26$\\
 Mean tree depth & $1.94$ & $5.74$\\
 $\hat R_{\max}$ & $1.004$ & $1.17$\\
 \bottomrule
@@ -376,10 +375,10 @@ $\hat R_{\max}$ & $1.004$ & $1.17$\\
 \centering
 \includegraphics[width=\linewidth]{../figures/fig8_param_corr.pdf}
 \caption{Posterior correlation structure (parametric comparison). The
-alternative $(q,\log\lambda,\log\beta)$ parameterisation (B) is not more
-orthogonal: its Hessian is about $550$ times worse-conditioned and its
-chains fail to converge. We therefore retain $(q,\log\eta,\log\beta)$ and
-describe it only as a better-conditioned, unconstrained system.}
+alternative $(q,\log\lambda,\log\beta)$ (B) is not more orthogonal: its
+Hessian is about $550\times$ worse-conditioned and its chains fail to
+converge. We retain $(q,\log\eta,\log\beta)$ as a better-conditioned,
+unconstrained system.}
 \label{fig:parcorr}
 \end{figure}
 
@@ -390,11 +389,12 @@ $q=2-e^{x_q}$ contributes the Jacobian term
 $\log|\partial q/\partial x_q|=x_q$; the priors on $\log\eta,\log\beta$ are
 already on $x_e,x_b$. The log-posterior is
 \begin{equation}\label{eq:post}
-\log p(\bm{x}\mid\text{data})
- = \ell(\bm{x})
- -\frac12\Big(\frac{q-\mu_q}{\sigma_q}\Big)^2 + x_q
- -\frac12\Big(\frac{x_e-\mu_e}{\sigma_e}\Big)^2
- -\frac12\Big(\frac{x_b-\mu_b}{\sigma_b}\Big)^2 .
+\begin{aligned}
+\log p(\bm{x}\mid\text{data}) &= \ell(\bm{x})
+ -\tfrac12\Big(\tfrac{q-\mu_q}{\sigma_q}\Big)^2 + x_q\\
+&\quad -\tfrac12\Big(\tfrac{x_e-\mu_e}{\sigma_e}\Big)^2
+ -\tfrac12\Big(\tfrac{x_b-\mu_b}{\sigma_b}\Big)^2 .
+\end{aligned}
 \end{equation}
 
 Let $g_q,g_\lambda,g_\beta$ denote the derivatives of the log-likelihood
@@ -494,18 +494,16 @@ chain can become stationary while the step-size adaptation collapses to
 zero. We replace the hard logarithm of the inner factor \eqref{eq:inner} by
 a smooth extension. For a small threshold $\varepsilon_s=10^{-3}$,
 \begin{equation}\label{eq:slog}
-\widetilde{\log}(u)=
-\begin{cases}
-\log u, & u>\varepsilon_s,\\[2pt]
-\log\varepsilon_s+\dfrac{u-\varepsilon_s}{\varepsilon_s},
-& u\le\varepsilon_s,
-\end{cases}
-\qquad
-\widetilde{\log}\,'(u)=
-\begin{cases}
+\begin{aligned}
+\widetilde{\log}(u)&=\begin{cases}
+\log u, & u>\varepsilon_s,\\
+\log\varepsilon_s+(u-\varepsilon_s)/\varepsilon_s, & u\le\varepsilon_s,
+\end{cases}\\[3pt]
+\widetilde{\log}\,'(u)&=\begin{cases}
 1/u, & u>\varepsilon_s,\\
 1/\varepsilon_s, & u\le\varepsilon_s .
 \end{cases}
+\end{aligned}
 \end{equation}
 Inside the data-supported region $u>\varepsilon_s$ the density is
 unchanged. We are explicit that we sample a \emph{computationally smoothed
@@ -566,24 +564,25 @@ production voltage NUTS fit ($2$ chains $\times\,2000$ draws, $1000$
 warm-up, target acceptance $0.9$).}
 \label{tab:divdiag}
 \small
-\begin{tabular}{lc}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{ll}
 \toprule
 Quantity & Value\\
 \midrule
 Warm-up divergences & $98$\\
 Post-warm-up divergences & $95$\\
-\quad near smooth-barrier / support wall & $\approx93$ ($\approx98\%$)\\
-\quad in data-supported posterior bulk (Mahalanobis $1.4$--$1.8$) & $2$\\
-Mean / max post-warm-up tree depth & $2.06$ / $4$\\
-Mean acceptance probability & $0.933$\\
+\quad near barrier / support wall & $\approx93$ ($\approx98\%$)\\
+\quad in posterior bulk (Mahalanobis $1.4$--$1.8$) & $2$\\
+Tree depth, mean / max & $2.06$ / $4$\\
+Acceptance probability & $0.933$\\
 Per-parameter ESS & $[494,486,615,776,800,964]$\\
 Total ESS & $4135$\\
 Effective samples / second & $68.3$\\
-BFMI (per chain, mean) & $[1.023,\,1.007]$ ($1.015$)\\
+BFMI (mean per chain) & $[1.023,\,1.007]$ ($1.015$)\\
 $\hat R_{\max}$ & $<1.01$\\
-Min inner factor at posterior mean (E / D) & $1.013$ / $0.838$\\
+Min inner factor (E / D) & $1.013$ / $0.838$\\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 % =====================================================================
@@ -812,12 +811,11 @@ Weak     & $0.6$  & $21.0$ & $0.22$ & $0.99^{*}$\\
 \begin{figure*}[h]
 \centering
 \includegraphics[width=.95\textwidth]{../figures/fig7_weak_id_map.pdf}
-\caption{Weak-identifiability map. Across true $q$, the observed
-information ($\det\bm I$, smallest eigenvalue $\lambda_{\min}$, condition
-number $\kappa$) and the target-cause event fraction
-$\mathrm{frac}_{\rm event}$ improve monotonically as truncation weakens,
-and the MLE RMSE($q$) tracks the resulting information scarcity. MLE RMSE:
-open circles, solid line; Bayes RMSE: filled circles, dashed line.}
+\caption{Weak-identifiability map. Observed information ($\det\bm I$,
+$\lambda_{\min}$, $\kappa$) and the target-cause event fraction rise
+monotonically as truncation weakens, and MLE RMSE($q$) tracks this
+information scarcity. Open circles/solid: MLE; filled circles/dashed:
+Bayes.}
 \label{fig:weakmap}
 \end{figure*}
 
@@ -1287,15 +1285,12 @@ reproducible research package on GitHub
 structure
 \begin{verbatim}
 qweibull-cr/
-  code/      Python (numpy/scipy/pandas/matplotlib/pymc) scripts:
-             nuts.py, bayes_model.py, cr_bayes_model.py,
-             penalized_mle.py, fisher_info.py, param_compare.py,
-             pymc_baseline.py, sim_eta_beta.py,
-             prior_center_sensitivity.py, boundary_fraction.py,
-             sample_size.py, ppc_voltage.py, dependent_cr.py
-  data/      simulation result JSONs, voltage.csv, posterior chains
-  figures/   fig1..fig10 (PDF and PNG)
-  paper/     main.tex, references.bib, USG.cls, build script
+  code/    Python scripts (numpy/pymc):
+           NUTS, likelihood, penalized-MLE,
+           Fisher, parameterisation, PPC
+  data/    simulation JSONs, voltage.csv
+  figures/ fig1..fig10 (PDF, PNG)
+  paper/   main.tex, references.bib, build
 \end{verbatim}
 Results are regenerated by running the \texttt{code/} scripts in order and
 compiling \texttt{paper/main.tex} with XeLaTeX (Section~\ref{app:build}).

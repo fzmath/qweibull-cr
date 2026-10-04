@@ -90,29 +90,32 @@ def main():
 
 def make_plot(records):
     qs = sorted(set(r["q"] for r in records))
-    cmap = plt.cm.gray
-    colors = {q: cmap(0.20 + 0.70 * i / max(len(qs) - 1, 1)) for i, q in enumerate(qs)}
+    palette = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"]
+    markers = ["o", "s", "^", "D", "v", "P"]
+    colors = {q: palette[i % len(palette)] for i, q in enumerate(qs)}
+    markmap = {q: markers[i % len(markers)] for i, q in enumerate(qs)}
     rho_x = {0.6: 0.6, 1.0: 1.0, 4.0: 4.0}
     fig, (axL, axR) = plt.subplots(1, 2, figsize=(12.5, 5.0), sharey=True)
     for q in qs:
         rows = sorted([r for r in records if r["q"] == q], key=lambda r: r["rho"])
+        mk = markmap[q]; col = colors[q]
         # 左: x=rho(log)
         xl = [np.log10(rho_x[r["rho"]]) for r in rows]
-        axL.plot(xl, [r["mle_rmse"] for r in rows], "-", color=colors[q],
-                 marker="o", mfc="white", mec=colors[q], mew=1.4, lw=1.1)
-        axL.plot(xl, [r["bayes_rmse"] for r in rows], "--", color=colors[q],
-                 marker="o", mfc=colors[q], mec=colors[q], mew=1.0, lw=1.1)
+        axL.plot(xl, [r["mle_rmse"] for r in rows], "-", color=col,
+                 marker=mk, mfc="white", mec=col, mew=1.4, lw=1.3)
+        axL.plot(xl, [r["bayes_rmse"] for r in rows], "--", color=col,
+                 marker=mk, mfc=col, mec=col, mew=1.0, lw=1.3)
         for r in rows:
             axL.annotate(f"{r['kappa']:.0f}",
                          (np.log10(rho_x[r["rho"]]), r["bayes_rmse"]),
                          textcoords="offset points", xytext=(3, 5),
-                         fontsize=5.5, color=colors[q])
+                         fontsize=5.5, color=col)
         # 右: x=log10(kappa)
         xr = [np.log10(r["kappa"]) for r in rows]
-        axR.plot(xr, [r["mle_rmse"] for r in rows], "-", color=colors[q],
-                 marker="o", mfc="white", mec=colors[q], mew=1.4, lw=1.1)
-        axR.plot(xr, [r["bayes_rmse"] for r in rows], "--", color=colors[q],
-                 marker="o", mfc=colors[q], mec=colors[q], mew=1.0, lw=1.1)
+        axR.plot(xr, [r["mle_rmse"] for r in rows], "-", color=col,
+                 marker=mk, mfc="white", mec=col, mew=1.4, lw=1.3)
+        axR.plot(xr, [r["bayes_rmse"] for r in rows], "--", color=col,
+                 marker=mk, mfc=col, mec=col, mew=1.0, lw=1.3)
     axL.set_xticks([np.log10(0.6), np.log10(1.0), np.log10(4.0)])
     axL.set_xticklabels(["strong\nrho=0.6", "moderate\nrho=1.0", "weak\nrho=4.0"])
     axL.set_xlabel("competing-risk cutoff strength  (log rho)")
@@ -129,7 +132,8 @@ def make_plot(records):
                label="Bayes q_W CR (median)"),
     ]
     axL.legend(handles=legend_elems, loc="upper left", fontsize=8, framealpha=0.9)
-    q_elems = [Line2D([0], [0], color=colors[q], lw=1.8, label=f"q={q}") for q in qs]
+    q_elems = [Line2D([0], [0], color=colors[q], lw=1.8, marker=markmap[q],
+                      mfc=colors[q], mec=colors[q], label=f"q={q}") for q in qs]
     axR.legend(handles=q_elems, loc="upper right", fontsize=7, title="true q_E",
                title_fontsize=8, framealpha=0.9)
     fig.suptitle("Weak identifiability map (open=MLE, filled=Bayes; numbers on (a) = kappa(I))",
