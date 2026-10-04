@@ -25,6 +25,16 @@
 
 \begin{document}
 
+% tighten float spacing to reduce loose whitespace after figures/tables
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.92}
+\renewcommand{\textfraction}{0.08}
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{6}
+
 \title{q-Weibull Competing Risks under Weak Identifiability: Bayesian
 Inference via the No-U-Turn Sampler}
 
@@ -755,9 +765,8 @@ cause, $\mathrm{frac}_{\rm event}$: it is only $0.28$--$0.37$ under strong
 truncation, about $0.54$ under moderate, and $0.82$--$0.97$ under weak
 truncation. The RMSE($q$) of the MLE tracks exactly this information
 scarcity, falling from $0.6$--$0.7$ (strong) to below $0.1$ (weak).
-Figure~\ref{fig:weakmap} uses open-circle solid lines for the MLE and
-filled-circle dashed lines for the Bayes RMSE, so that the panels remain
-legible in greyscale.
+Figure~\ref{fig:weakmap} colour-codes each true $q$, with open-circle solid
+lines for the MLE and filled-circle dashed lines for the Bayes RMSE.
 
 Because $\det(\bm I)$ depends on the units of the parameterisation, it is
 only an auxiliary summary. A more interpretable measure of the information
@@ -1010,9 +1019,8 @@ enough to inform the tail: under strong truncation $p_{\rm tail}$ is small,
 so even $n=200$ carries little tail information. The $n=500$ point uses only
 $R=12$ replicates (Monte Carlo standard error $\approx0.063$), so this
 sample-size scan is treated as \emph{exploratory} rather than as a formal
-Monte Carlo validation. Figure~\ref{fig:n_effect} uses distinct black line
-styles and markers (solid circle, dashed square, dotted triangle, dash-dot
-diamond) so it prints unambiguously in greyscale.
+Monte Carlo validation. Figure~\ref{fig:n_effect} colour-codes the four
+curves with distinct markers (MLE/Bayes RMSE and $|$bias$|$).
 
 \begin{figure}[h]
 \centering
@@ -1020,8 +1028,7 @@ diamond) so it prints unambiguously in greyscale.
 \caption{Estimation error versus sample size under strong truncation
 ($q=1.45$). The MLE RMSE stays on a weak-identification plateau for
 $n=50$--$200$ and drops only at $n=500$; the Bayesian RMSE is flatter and
-its coverage stays at least $0.92$. Distinct black line styles and markers
-are used for greyscale legibility.}
+its coverage stays at least $0.92$.}
 \label{fig:n_effect}
 \end{figure}
 
