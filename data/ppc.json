@@ -1,0 +1,88 @@
+{
+  "nE": {
+    "name": "E failure count",
+    "observed": 18.0,
+    "ppc_median": 19.0,
+    "ppc_95_lo": 10.0,
+    "ppc_95_hi": 28.524999999999977,
+    "covered": true
+  },
+  "nD": {
+    "name": "D failure count",
+    "observed": 27.0,
+    "ppc_median": 29.0,
+    "ppc_95_lo": 21.0,
+    "ppc_95_hi": 38.0,
+    "covered": true
+  },
+  "max_t": {
+    "name": "max observed lifetime",
+    "observed": 446.0,
+    "ppc_median": 441.7586070150759,
+    "ppc_95_lo": 390.2122351137335,
+    "ppc_95_hi": 548.8523709766705,
+    "covered": true
+  },
+  "cif_E_446": {
+    "name": "CIF_E(446h)",
+    "observed": 0.34594237494415997,
+    "ppc_median": 0.3614238597611414,
+    "ppc_95_lo": 0.19692787638630313,
+    "ppc_95_hi": 0.549496376831142,
+    "covered": true
+  },
+  "cif_D_446": {
+    "name": "CIF_D(446h)",
+    "observed": 0.6172748837172964,
+    "ppc_median": 0.6184564159833941,
+    "ppc_95_lo": 0.43121550322026925,
+    "ppc_95_hi": 0.798600157935518,
+    "covered": true
+  },
+  "rsys_50h": {
+    "name": "system survival at 50h",
+    "observed": 0.8783344176968118,
+    "ppc_median": 0.8610742705570291,
+    "ppc_95_lo": 0.738059185563441,
+    "ppc_95_hi": 0.9648902821316614,
+    "covered": true
+  },
+  "rsys_100h": {
+    "name": "system survival at 100h",
+    "observed": 0.8214399424133776,
+    "ppc_median": 0.8037038706696207,
+    "ppc_95_lo": 0.6445605445898552,
+    "ppc_95_hi": 0.9259782016083493,
+    "covered": true
+  },
+  "rsys_200h": {
+    "name": "system survival at 200h",
+    "observed": 0.6971810606660128,
+    "ppc_median": 0.6745336280568661,
+    "ppc_95_lo": 0.5126342473382505,
+    "ppc_95_hi": 0.8134308733987134,
+    "covered": true
+  },
+  "rsys_300h": {
+    "name": "system survival at 300h",
+    "observed": 0.423537494354603,
+    "ppc_median": 0.3975945607757857,
+    "ppc_95_lo": 0.23203516242592395,
+    "ppc_95_hi": 0.5848290255109655,
+    "covered": true
+  },
+  "rsys_400h": {
+    "name": "system survival at 400h",
+    "observed": 0.044118488995271175,
+    "ppc_median": 0.06644006206467981,
+    "ppc_95_lo": 0.0,
+    "ppc_95_hi": 0.18159975442585097,
+    "covered": true
+  },
+  "meta": {
+    "n_draws": 300,
+    "n_subjects": 58,
+    "censoring_approach": "fixed observed censoring times applied to posterior predictive draws",
+    "t_grid_max": 460.0
+  }
+}

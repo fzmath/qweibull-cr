@@ -1,0 +1,99 @@
+{
+  "engine": "PyMC 6.3.2 (pytensor 3.3.3, NUTS=Stan/Hoffman-Gelbaum No-U-Turn, dense mass, dual averaging)",
+  "model": "Weibull q=1, 2-mode competing risks on voltage (n=58)",
+  "setup": {
+    "draws": 600,
+    "tune": 400,
+    "chains": 2,
+    "target_accept": 0.9,
+    "cores": 1
+  },
+  "wall_sampling_sec": 77.06154274940491,
+  "note_wall": "wall 含首次 pytensor JIT 编译; PyMC 自报纯采样(sampling only)约 17s",
+  "sampling_only_sec": 17.0,
+  "divergences": 0,
+  "ess_bulk": [
+    341.638841,
+    374.985966,
+    301.628169,
+    363.481107
+  ],
+  "ess_tail": [
+    427.762699,
+    332.963342,
+    458.088051,
+    294.958108
+  ],
+  "ess_bulk_total": 1381.734083,
+  "ess_per_sec": 17.930267597850165,
+  "ess_per_sec_sampling_only": 81.2784769182087,
+  "r_hat": [
+    1.002309,
+    1.002472,
+    1.002057,
+    1.001514
+  ],
+  "r_hat_max": 1.002472,
+  "summary": {
+    "mean": {
+      "log_lam[0]": -4.821665,
+      "log_lam[1]": -11.001583,
+      "log_beta[0]": -0.393088,
+      "log_beta[1]": 0.626164
+    },
+    "sd": {
+      "log_lam[0]": 0.721736,
+      "log_lam[1]": 1.157121,
+      "log_beta[0]": 0.194289,
+      "log_beta[1]": 0.108838
+    },
+    "eti89_lb": {
+      "log_lam[0]": -6.016432,
+      "log_lam[1]": -12.85724,
+      "log_beta[0]": -0.718359,
+      "log_beta[1]": 0.446273
+    },
+    "eti89_ub": {
+      "log_lam[0]": -3.719044,
+      "log_lam[1]": -9.18515,
+      "log_beta[0]": -0.108953,
+      "log_beta[1]": 0.789546
+    },
+    "ess_bulk": {
+      "log_lam[0]": 341.638841,
+      "log_lam[1]": 374.985966,
+      "log_beta[0]": 301.628169,
+      "log_beta[1]": 363.481107
+    },
+    "ess_tail": {
+      "log_lam[0]": 427.762699,
+      "log_lam[1]": 332.963342,
+      "log_beta[0]": 458.088051,
+      "log_beta[1]": 294.958108
+    },
+    "r_hat": {
+      "log_lam[0]": 1.002309,
+      "log_lam[1]": 1.002472,
+      "log_beta[0]": 1.002057,
+      "log_beta[1]": 1.001514
+    },
+    "mcse_mean": {
+      "log_lam[0]": 0.038367,
+      "log_lam[1]": 0.059453,
+      "log_beta[0]": 0.011336,
+      "log_beta[1]": 0.005829
+    },
+    "mcse_sd": {
+      "log_lam[0]": 0.026386,
+      "log_lam[1]": 0.048962,
+      "log_beta[0]": 0.007081,
+      "log_beta[1]": 0.005102
+    }
+  },
+  "compare_to_own_nuts": {
+    "note": "现有 nuts.py (q-Weibull 完整模型 A 参数化): ess_per_sec=129.5, div=18, rhat_max=1.004, wall=15.1s",
+    "own_nuts_ess_per_sec": 129.48,
+    "own_nuts_div": 18,
+    "own_nuts_rhat_max": 1.004
+  }
+}
