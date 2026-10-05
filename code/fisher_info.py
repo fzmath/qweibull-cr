@@ -126,14 +126,10 @@ def make_plot(records):
     for ax in (axL, axR):
         ax.grid(alpha=0.3)
     from matplotlib.lines import Line2D
-    legend_elems = [
-        Line2D([0], [0], color="k", lw=1.1, marker="o", mfc="white", mec="k", label="MLE q_W CR"),
-        Line2D([0], [0], color="k", lw=1.1, ls="--", marker="o", mfc="k", mec="k",
-               label="Bayes q_W CR (median)"),
-    ]
-    axL.legend(handles=legend_elems, loc="upper left", fontsize=8, framealpha=0.9)
     q_elems = [Line2D([0], [0], color=colors[q], lw=1.8, marker=markmap[q],
                       mfc=colors[q], mec=colors[q], label=f"q={q}") for q in qs]
+    axL.legend(handles=q_elems, loc="upper right", fontsize=7, title="true q_E",
+               title_fontsize=8, framealpha=0.9)
     axR.legend(handles=q_elems, loc="upper right", fontsize=7, title="true q_E",
                title_fontsize=8, framealpha=0.9)
     fig.suptitle("Weak identifiability map (open=MLE, filled=Bayes; numbers on (a) = kappa(I))",
