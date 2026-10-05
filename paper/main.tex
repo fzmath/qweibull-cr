@@ -35,6 +35,13 @@
 \setcounter{topnumber}{4}
 \setcounter{totalnumber}{6}
 
+% tighten the vertical space before section/subsection headings
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}{-15\p@ \@plus -2\p@ \@minus -2\p@}{8\p@}{\fontsize{10}{12}\selectfont\bfseries}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}{-12\p@ \@plus -2\p@ \@minus -2\p@}{8\p@}{\fontsize{10}{12}\selectfont\bfseries}}
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}{-11\p@ \@plus -2\p@ \@minus -2\p@}{8\p@}{\fontsize{9}{11}\selectfont\bfseries}}
+\makeatother
+
 \title{q-Weibull Competing Risks under Weak Identifiability: Bayesian
 Inference via the No-U-Turn Sampler}
 
