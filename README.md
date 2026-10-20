@@ -2,9 +2,9 @@
 
 Reproducible research package for:
 
-> **q-Weibull Competing Risks under Weak Identifiability: Bayesian Inference via the No-U-Turn Sampler**
+> **Bayesian Inference for Weakly Identifiable Tail Parameters under Competing Risks: Regularization, Calibration, and Computation**
 
-Authors: Huirong Cao (Langfang Normal University, Langfang) and Fuchang Wang (University of Emergency Management, Sanhe). Corresponding author: Huirong Cao (huirongcao@126.com). Target journal: *Quality and Reliability Engineering International* (QREI, Wiley).
+Authors: Huirong Cao (Langfang Normal University, Langfang) and Fuchang Wang (University of Emergency Management, Sanhe). Corresponding author: Fuchang Wang (wangfuchang@cidp.edu.cn). Target journal: *Communications in Statistics – Simulation and Computation* (CISS, Taylor & Francis).
 
 ## Repository layout
 
