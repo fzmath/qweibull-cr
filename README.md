@@ -4,7 +4,7 @@ Reproducible research package for:
 
 > **Bayesian Inference for Weakly Identifiable Tail Parameters under Competing Risks: Regularization, Calibration, and Computation**
 
-Authors: Huirong Cao (Langfang Normal University, Langfang) and Fuchang Wang (University of Emergency Management, Sanhe). Corresponding author: Fuchang Wang (wangfuchang@cidp.edu.cn). Target journal: *Communications in Statistics – Simulation and Computation* (CISS, Taylor & Francis).
+Authors: Huirong Cao (School of Science, Langfang Normal University, Langfang) and Fuchang Wang (School of Science, Emergency Management University, Sanhe). Corresponding author: Huirong Cao (huirongcao@126.com). Target journal: *Communications in Statistics – Simulation and Computation* (CISS, Taylor & Francis).
 
 ## Repository layout
 
