@@ -21,3 +21,16 @@ venv/
 Thumbs.db
 .vscode/
 .idea/
+paper/
+paper2/
+submission/
+*.tex
+*.bib
+*.bbl
+*.aux
+*.log
+*.out
+*.synctex*
+*.spl
+*.cls
+*.sty
